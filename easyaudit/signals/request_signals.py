@@ -37,7 +37,7 @@ def request_started_handler(sender, environ, **kwargs):
     # get the user from cookies
     user = None
     if environ.get('HTTP_COOKIE'):
-        cookie = SimpleCookie() # python3 compatibility
+        cookie = SimpleCookie()  # python3 compatibility
         cookie.load(environ['HTTP_COOKIE'])
 
         session_cookie_name = settings.SESSION_COOKIE_NAME
@@ -55,8 +55,7 @@ def request_started_handler(sender, environ, **kwargs):
                     user = get_user_model().objects.get(id=user_id)
                 except:
                     user = None
-
-    request_event = RequestEvent.objects.create(
+    request_event = RequestEvent().save(
         url=environ['PATH_INFO'],
         method=environ['REQUEST_METHOD'],
         query_string=environ['QUERY_STRING'],

@@ -1,85 +1,66 @@
-from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
-from django.db import models
+import datetime
+from easyaudit.connection import MongoConnection
+import logging
+
+from easyaudit.settings import (
+    MONGODB_REQUEST_COLLECTION_NAME,
+    MONGODB_LOGIN_COLLECTION_NAME,
+    MONGODB_CRUD_COLLECTION_NAME,
+    MONGODB_ADDRESS,
+    MONGODB_NAME
+)
+
+mongo_connection = MongoConnection(MONGODB_ADDRESS, MONGODB_NAME)
+mongo_connection.connect()
+
+logging.basicConfig(filename='logging.log', filemode='a', format='%(message)s')
 
 
-# Create your models here.
-class CRUDEvent(models.Model):
+class BaseMongoModel(object):
+
+    @staticmethod
+    def insert(collection_name, **kwargs):
+        if 'datetime' not in kwargs:
+            kwargs['datetime'] = str(datetime.datetime.now())
+
+        try:
+            mongo_connection.insert(collection_name, kwargs)
+
+        except ConnectionError:
+            logging.warning('mongo-db-connection-error - %s' % (
+                kwargs
+            ))
+
+
+class CRUDEvent(BaseMongoModel):
     CREATE = 1
     UPDATE = 2
     DELETE = 3
     M2M_CHANGE = 4
     M2M_CHANGE_REV = 5
 
-    TYPES = (
-        (CREATE, 'Create'),
-        (UPDATE, 'Update'),
-        (DELETE, 'Delete'),
-        (M2M_CHANGE, 'Many-to-Many Change'),
-        (M2M_CHANGE_REV, 'Reverse Many-to-Many Change'),
-    )
+    def __init__(self):
+        super().__init__()
 
-    event_type = models.SmallIntegerField(choices=TYPES)
-    object_id = models.IntegerField()  # we should try to allow other ID types
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, db_constraint=False)
-    object_repr = models.TextField(null=True, blank=True)
-    object_json_repr = models.TextField(null=True, blank=True)
-    changed_fields = models.TextField(null=True, blank=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
-                             blank=True, on_delete=models.SET_NULL,
-                             db_constraint=False)
-    user_pk_as_string = models.CharField(max_length=255, null=True, blank=True,
-                                         help_text='String version of the user pk')
-    datetime = models.DateTimeField(auto_now_add=True)
-
-    def is_create(self):
-        return self.CREATE == self.event_type
-
-    def is_update(self):
-        return self.UPDATE == self.event_type
-
-    def is_delete(self):
-        return self.DELETE == self.event_type
-
-    class Meta:
-        verbose_name = 'CRUD event'
-        verbose_name_plural = 'CRUD events'
-        ordering = ['-datetime']
-        index_together = ['object_id', 'content_type', ]
+    def save(self, **kwargs):
+        self.insert(MONGODB_CRUD_COLLECTION_NAME, **kwargs)
 
 
-class LoginEvent(models.Model):
+class LoginEvent(BaseMongoModel):
     LOGIN = 0
     LOGOUT = 1
     FAILED = 2
-    TYPES = (
-        (LOGIN, 'Login'),
-        (LOGOUT, 'Logout'),
-        (FAILED, 'Failed login'),
-    )
-    login_type = models.SmallIntegerField(choices=TYPES)
-    username = models.CharField(max_length=255, null=True, blank=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                             on_delete=models.SET_NULL, db_constraint=False)
-    remote_ip = models.CharField(max_length=50, null=True, db_index=True)
-    datetime = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        verbose_name = 'login event'
-        verbose_name_plural = 'login events'
-        ordering = ['-datetime']
+    def __init__(self):
+        super().__init__()
+
+    def save(self, **kwargs):
+        self.insert(MONGODB_LOGIN_COLLECTION_NAME, **kwargs)
 
 
-class RequestEvent(models.Model):
-    url = models.TextField(null=False, db_index=False)
-    method = models.CharField(max_length=20, null=False, db_index=True)
-    query_string = models.TextField(null=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True,
-                             on_delete=models.SET_NULL, db_constraint=False)
-    remote_ip = models.CharField(max_length=50, null=True, db_index=True)
-    datetime = models.DateTimeField(auto_now_add=True)
+class RequestEvent(BaseMongoModel):
+    def __init__(self):
+        super().__init__()
 
-    class Meta:
-        verbose_name = 'request event'
-        verbose_name_plural = 'request events'
-        ordering = ['-datetime']
+    def save(self, **kwargs):
+        self.insert(MONGODB_REQUEST_COLLECTION_NAME, **kwargs)

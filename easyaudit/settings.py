@@ -9,8 +9,6 @@ from django.db.migrations import Migration
 from django.db.migrations.recorder import MigrationRecorder
 from django.utils import six
 
-from easyaudit.models import CRUDEvent, LoginEvent, RequestEvent
-
 
 def get_model_list(class_list):
     """
@@ -32,22 +30,21 @@ REMOTE_ADDR_HEADER = getattr(settings, 'DJANGO_EASY_AUDIT_REMOTE_ADDR_HEADER', '
 
 USER_DB_CONSTRAINT = bool(getattr(settings, 'DJANGO_EASY_AUDIT_USER_DB_CONSTRAINT', True))
 
-
 # Models which Django Easy Audit will not log.
 # By default, all but some models will be audited.
 # The list of excluded models can be overwritten or extended
 # by defining the following settings in the project.
-UNREGISTERED_CLASSES = [CRUDEvent, LoginEvent, RequestEvent, Migration, Session, Permission, ContentType, MigrationRecorder.Migration]
+UNREGISTERED_CLASSES = [Migration, Session, Permission, ContentType, MigrationRecorder.Migration]
 
 # Import and unregister LogEntry class only if Django Admin app is installed
 if apps.is_installed('django.contrib.admin'):
     from django.contrib.admin.models import LogEntry
+
     UNREGISTERED_CLASSES += [LogEntry]
 
 UNREGISTERED_CLASSES = getattr(settings, 'DJANGO_EASY_AUDIT_UNREGISTERED_CLASSES_DEFAULT', UNREGISTERED_CLASSES)
 UNREGISTERED_CLASSES.extend(getattr(settings, 'DJANGO_EASY_AUDIT_UNREGISTERED_CLASSES_EXTRA', []))
 get_model_list(UNREGISTERED_CLASSES)
-
 
 # Models which Django Easy Audit WILL log.
 # If the following setting is defined in the project,
@@ -55,7 +52,6 @@ get_model_list(UNREGISTERED_CLASSES)
 # model will be excluded.
 REGISTERED_CLASSES = getattr(settings, 'DJANGO_EASY_AUDIT_REGISTERED_CLASSES', [])
 get_model_list(REGISTERED_CLASSES)
-
 
 # URLs which Django Easy Audit will not log.
 # By default, all but some URL requests will be logged.
@@ -66,20 +62,17 @@ UNREGISTERED_URLS = [r'^/admin/', r'^/static/', r'^/favicon.ico$']
 UNREGISTERED_URLS = getattr(settings, 'DJANGO_EASY_AUDIT_UNREGISTERED_URLS_DEFAULT', UNREGISTERED_URLS)
 UNREGISTERED_URLS.extend(getattr(settings, 'DJANGO_EASY_AUDIT_UNREGISTERED_URLS_EXTRA', []))
 
-
 # URLs which Django Easy Audit WILL log.
 # If the following setting is defined in the project,
 # only the listed URLs will be audited, and every other
 # URL will be excluded.
 REGISTERED_URLS = getattr(settings, 'DJANGO_EASY_AUDIT_REGISTERED_URLS', [])
 
-
 # By default all modules are listed in the admin.
 # This can be changed with the following settings.
 ADMIN_SHOW_MODEL_EVENTS = getattr(settings, 'DJANGO_EASY_AUDIT_ADMIN_SHOW_MODEL_EVENTS', True)
 ADMIN_SHOW_AUTH_EVENTS = getattr(settings, 'DJANGO_EASY_AUDIT_ADMIN_SHOW_AUTH_EVENTS', True)
 ADMIN_SHOW_REQUEST_EVENTS = getattr(settings, 'DJANGO_EASY_AUDIT_ADMIN_SHOW_REQUEST_EVENTS', True)
-
 
 # project defined callbacks
 CRUD_DIFFERENCE_CALLBACKS = []
@@ -100,6 +93,18 @@ for idx, callback in enumerate(CRUD_DIFFERENCE_CALLBACKS):
 TRUNCATE_TABLE_SQL_STATEMENT = getattr(settings, 'DJANGO_EASY_AUDIT_TRUNCATE_TABLE_SQL_STATEMENT', '')
 
 # Changeview filters configuration
-CRUD_EVENT_LIST_FILTER = getattr(settings, 'DJANGO_EASY_AUDIT_CRUD_EVENT_LIST_FILTER', ['event_type', 'content_type', 'user', 'datetime', ])
-LOGIN_EVENT_LIST_FILTER = getattr(settings, 'DJANGO_EASY_AUDIT_LOGIN_EVENT_LIST_FILTER', ['login_type', 'user', 'datetime', ])
-REQUEST_EVENT_LIST_FILTER = getattr(settings, 'DJANGO_EASY_AUDIT_REQUEST_EVENT_LIST_FILTER', ['method', 'user', 'datetime', ])
+CRUD_EVENT_LIST_FILTER = getattr(settings, 'DJANGO_EASY_AUDIT_CRUD_EVENT_LIST_FILTER',
+                                 ['event_type', 'content_type', 'user', 'datetime', ])
+LOGIN_EVENT_LIST_FILTER = getattr(settings, 'DJANGO_EASY_AUDIT_LOGIN_EVENT_LIST_FILTER',
+                                  ['login_type', 'user', 'datetime', ])
+REQUEST_EVENT_LIST_FILTER = getattr(settings, 'DJANGO_EASY_AUDIT_REQUEST_EVENT_LIST_FILTER',
+                                    ['method', 'user', 'datetime', ])
+
+BASE_DIR = getattr(settings, 'BASE_DIR', '')
+
+# mongo db configs.
+MONGODB_ADDRESS = getattr(settings, 'MONGODB_ADDRESS', 'mongodb://localhost:27017/')
+MONGODB_NAME = getattr(settings, 'MONGODB_NAME', 'EasyAudit')
+MONGODB_CRUD_COLLECTION_NAME = getattr(settings, 'MONGODB_CRUD_COLLECTION_NAME', 'CRUDEvent')
+MONGODB_LOGIN_COLLECTION_NAME = getattr(settings, 'MONGODB_LOGIN_COLLECTION_NAME', 'LoginEvent')
+MONGODB_REQUEST_COLLECTION_NAME = getattr(settings, 'MONGODB_REQUEST_COLLECTION_NAME', 'RequestEvent')
