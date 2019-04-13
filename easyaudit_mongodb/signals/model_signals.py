@@ -10,12 +10,12 @@ from django.db.models import signals
 from django.utils import timezone
 from django.utils.encoding import force_text
 
-from easyaudit.middleware.easyaudit import get_current_request, \
+from easyaudit_mongodb.middleware.easyaudit import get_current_request, \
     get_current_user
-from easyaudit.models import CRUDEvent
-from easyaudit.settings import REGISTERED_CLASSES, UNREGISTERED_CLASSES, \
+from easyaudit_mongodb.models import CRUDEvent
+from easyaudit_mongodb.settings import REGISTERED_CLASSES, UNREGISTERED_CLASSES, \
     WATCH_MODEL_EVENTS, CRUD_DIFFERENCE_CALLBACKS
-from easyaudit.utils import model_delta
+from easyaudit_mongodb.utils import model_delta
 
 logger = logging.getLogger(__name__)
 

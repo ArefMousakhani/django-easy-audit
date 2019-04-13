@@ -9,16 +9,13 @@ with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as readme:
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
-    name='django-easy-audit',
-    version='1.1',
+    name='easyaudit_mongodb',
+    version='0.1',
     packages=find_packages(),
     include_package_data=True,
     license='GPL3',
     description='Yet another Django audit log app, hopefully the simplest one.',
     long_description=README,
-    url='https://github.com/soynatan/django-easy-audit',
-    author='Natán Calzolari',
-    author_email='natancalzolari@gmail.com',
     classifiers=[
         'Environment :: Plugins',
         'Framework :: Django',

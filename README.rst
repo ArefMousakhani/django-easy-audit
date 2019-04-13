@@ -1,26 +1,44 @@
-=================
-django-easy-audit
-=================
+#### This Project Retrieved From [django-easy-audit](https://github.com/soynatan/django-easy-audit )
 
-Yet another Django audit log app, hopefully the simplest one.
+# django-easy-audit-mongodb
 
-Quick start
------------
+Yet another Django audit log app, hopefully the easiest one.
 
-1. Add "easyaudit" to your INSTALLED_APPS setting like this::
+This app allows you to keep track of every action taken by your users.
 
+## Quickstart
+
+1. First Install `pymongo` by running `pip install pymongo`.
+
+
+2. Add 'easyaudit' to your `INSTALLED_APPS` like this:
+
+    ```python
     INSTALLED_APPS = [
         ...
-        'easyaudit',
+        'easyaudit-mongodb',
     ]
+    ```
 
-2. Add django-easy-audit's middleware to your MIDDLEWARE (or MIDDLEWARE_CLASSES) setting like this::
+3. Add Easy Audit's middleware to your `MIDDLEWARE` (or `MIDDLEWARE_CLASSES`) setting like this:
 
+    ```python
     MIDDLEWARE = (
         ...
-        'easyaudit.middleware.easyaudit.EasyAuditMiddleware',
+        'easyaudit-mongodb.middleware.easyaudit.EasyAuditMiddleware',
     )
+    ```
 
-3. Run 'python manage.py migrate easyaudit' to create the audit models.
+4. Add Mongodb Config to your django `settings.py`:
 
-4. That's it! Now every CRUD event on your whole project will be registered in the audit models, which you will be able to query from the Django admin app. Additionally, this app will also log all authentication events and all URLs requested.
+    ```python
+    MONGODB_ADDRESS = 'mongodb://localhost:27017/'
+    MONGODB_NAME = 'EasyAudit'
+    MONGODB_CRUD_COLLECTION_NAME = 'CRUDEvent'
+    MONGODB_LOGIN_COLLECTION_NAME = 'LoginEvent'
+    MONGODB_REQUEST_COLLECTION_NAME = 'RequestEvent'
+    ```
+
+## Contact
+
+[aref.mouskhani@gmail.com](mailto:aref.mousakhani@gmail.com)

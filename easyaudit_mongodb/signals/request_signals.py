@@ -5,8 +5,8 @@ from django.http.cookie import SimpleCookie
 from django.utils import six, timezone
 from django.conf import settings
 
-from easyaudit.models import RequestEvent
-from easyaudit.settings import REMOTE_ADDR_HEADER, UNREGISTERED_URLS, REGISTERED_URLS, WATCH_REQUEST_EVENTS
+from easyaudit_mongodb.models import RequestEvent
+from easyaudit_mongodb.settings import REMOTE_ADDR_HEADER, UNREGISTERED_URLS, REGISTERED_URLS, WATCH_REQUEST_EVENTS
 
 import re
 

@@ -1,8 +1,8 @@
 import datetime
-from easyaudit.connection import MongoConnection
+from easyaudit_mongodb.connection import MongoConnection
 import logging
 
-from easyaudit.settings import (
+from easyaudit_mongodb.settings import (
     MONGODB_REQUEST_COLLECTION_NAME,
     MONGODB_LOGIN_COLLECTION_NAME,
     MONGODB_CRUD_COLLECTION_NAME,
@@ -26,7 +26,7 @@ class BaseMongoModel(object):
         try:
             mongo_connection.insert(collection_name, kwargs)
 
-        except ConnectionError:
+        except:
             logging.warning('mongo-db-connection-error - %s' % (
                 kwargs
             ))

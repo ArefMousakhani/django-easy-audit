@@ -1,9 +1,9 @@
 from django.contrib.auth import signals, get_user_model
 from django.db import transaction
 
-from easyaudit.middleware.easyaudit import get_current_request
-from easyaudit.models import LoginEvent
-from easyaudit.settings import REMOTE_ADDR_HEADER, WATCH_AUTH_EVENTS
+from easyaudit_mongodb.middleware.easyaudit import get_current_request
+from easyaudit_mongodb.models import LoginEvent
+from easyaudit_mongodb.settings import REMOTE_ADDR_HEADER, WATCH_AUTH_EVENTS
 
 
 def user_logged_in(sender, request, user, **kwargs):
