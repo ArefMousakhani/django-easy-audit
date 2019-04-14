@@ -10,13 +10,23 @@ This app allows you to keep track of every action taken by your users.
 
 1. First Install `pymongo` by running `pip install pymongo`.
 
+2. install `easyaudit_mongodb`:
 
-2. Add 'easyaudit' to your `INSTALLED_APPS` like this:
+    ``` 
+    wget https://github.com/ArefMousakhani/django-easy-audit/blob/master/easyaudit_mongodb-0.1.tar.gz
+    ```
+
+    then 
+    
+    ```
+    pip install ./easyaudit_mongodb-0.1.tar.gz
+    ```
+2. Add `easyaudit_mongodb` to your `INSTALLED_APPS` like this:
 
     ```python
     INSTALLED_APPS = [
         ...
-        'easyaudit-mongodb',
+        'easyaudit_mongodb',
     ]
     ```
 
@@ -25,7 +35,7 @@ This app allows you to keep track of every action taken by your users.
     ```python
     MIDDLEWARE = (
         ...
-        'easyaudit-mongodb.middleware.easyaudit.EasyAuditMiddleware',
+        'easyaudit_mongodb.middleware.easyaudit.EasyAuditMiddleware',
     )
     ```
 

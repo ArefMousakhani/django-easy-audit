@@ -15,6 +15,7 @@ setup(
     include_package_data=True,
     license='GPL3',
     description='Yet another Django audit log app, hopefully the simplest one.',
+    url="https://github.com/ArefMousakhani/django-easy-audit",
     long_description=README,
     classifiers=[
         'Environment :: Plugins',

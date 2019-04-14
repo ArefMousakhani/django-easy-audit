@@ -21,6 +21,7 @@ class MongoConnection(object):
             collection.insert(data)
 
         except:
-            self.connection.close()
+            if self.connection is not None:
+                self.connection.close()
             self.connect()
             raise ConnectionError

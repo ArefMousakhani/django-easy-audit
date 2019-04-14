@@ -92,11 +92,11 @@ def pre_save(sender, instance, raw, using, update_fields, **kwargs):
                 sid = transaction.savepoint()
                 try:
                     with transaction.atomic():
-                        crud_event = CRUDEvent.objects.create(
+                        crud_event = CRUDEvent().save(
                             event_type=event_type,
                             object_repr=str(instance),
-                            object_json_repr=object_json_repr,
-                            changed_fields=changed_fields,
+                            object_json_repr=json.loads(object_json_repr),
+                            changed_fields=json.loads(changed_fields),
                             content_type_id=c_t.id,
                             object_id=instance.pk,
                             user_id=getattr(user, 'id', None),
@@ -152,10 +152,10 @@ def post_save(sender, instance, created, raw, using, update_fields, **kwargs):
                 sid = transaction.savepoint()
                 try:
                     with transaction.atomic():
-                        crud_event = CRUDEvent.objects.create(
+                        crud_event = CRUDEvent().save(
                             event_type=event_type,
                             object_repr=str(instance),
-                            object_json_repr=object_json_repr,
+                            object_json_repr=json.loads(object_json_repr),
                             content_type_id=c_t.id,
                             object_id=instance.pk,
                             user_id=getattr(user, 'id', None),
@@ -232,10 +232,10 @@ def m2m_changed(sender, instance, action, reverse, model, pk_set, using, **kwarg
 
             try:
                 with transaction.atomic():
-                    crud_event = CRUDEvent.objects.create(
+                    crud_event = CRUDEvent().save(
                         event_type=event_type,
                         object_repr=str(instance),
-                        object_json_repr=object_json_repr,
+                        object_json_repr=json.loads(object_json_repr),
                         content_type_id=c_t.id,
                         object_id=instance.pk,
                         user_id=getattr(user, 'id', None),
@@ -275,10 +275,10 @@ def post_delete(sender, instance, using, **kwargs):
             try:
                 with transaction.atomic():
                     # crud event
-                    crud_event = CRUDEvent.objects.create(
+                    crud_event = CRUDEvent().save(
                         event_type=CRUDEvent.DELETE,
                         object_repr=str(instance),
-                        object_json_repr=object_json_repr,
+                        object_json_repr=json.loads(object_json_repr),
                         content_type_id=c_t.id,
                         object_id=instance.pk,
                         user_id=getattr(user, 'id', None),
