@@ -13,7 +13,7 @@ This app allows you to keep track of every action taken by your users.
 2. install `easyaudit_mongodb`:
 
     ``` 
-    wget https://github.com/ArefMousakhani/django-easy-audit/blob/master/easyaudit_mongodb-0.1.tar.gz
+    wget https://github.com/ArefMousakhani/django-easy-audit/raw/master/easyaudit_mongodb-0.1.tar.gz
     ```
 
     then 
